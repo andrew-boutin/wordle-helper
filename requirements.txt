@@ -1,0 +1,2 @@
+# https://pypi.org/project/english-words/#description
+english_words==1.1.0

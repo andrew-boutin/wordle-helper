@@ -2,9 +2,10 @@
 
 A program that can be helpful when playing [Wordle](https://www.nytimes.com/games/wordle/index.html).
 
-* See the number of valid words given a state.
-* See the probability of guessing the correct word given a state.
-* See the valid word choices given a state.
+The program loads a set of all known words and trims it down to those matching the target length. Then it can further
+remove words that contain letters that are known to not be in the target word. It can also remove words that do not have
+a given letter at a given index in the word. Statistics are shown at each step to indicate how many matching words are
+left, the probability of guessing the correct word, and the possible words can even be printed out.
 
 ## Requirements
 

@@ -28,13 +28,19 @@ A program that can be helpful when playing [Wordle](https://www.nytimes.com/game
 ## Example
 
     (wordle-helper-venv) aboutin@aboutin-mac wordle-helper % python main.py
+    ------ Start ------
+    25480 known words to process
+    Finding words of length 5
     ------ Stats ------
     3194 words found
     Chance of correct guess 0.03%
     ---- End Stats ----
     Removing words that contain invalid letters: ['r', 's', 't', 'l', 'n', 'e']
+    Removing words that do not have the following letters at the respective index: {0: 'a', 4: 'o'}
     ------ Stats ------
-    185 words found
-    Chance of correct guess 0.54%
+    audio
+    amoco
+    amigo
+    3 words found
+    Chance of correct guess 33.33%
     ---- End Stats ----
-

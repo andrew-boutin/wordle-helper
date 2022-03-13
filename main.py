@@ -6,9 +6,10 @@ import re, json
 # TODO: Account for letters that are known to be in the word, but at an unknown position.
 known_invalid_letters = ['r', 's', 't', 'l', 'n', 'e']
 word_set = english_words_lower_set
+word_length = 5
 
-# A pattern for only 5 lowercase letters.
-pattern = re.compile("^[a-z]{5}$")
+# A pattern for only X lowercase letters.
+pattern = re.compile("^[a-z]{" + str(word_length) + "}$")
 
 # Base try which is a tuple of a dictionary and a boolean. The boolean indicates if this level is a word ending.
 wordTry = ({}, False)
@@ -69,7 +70,7 @@ def addWordHelper(curTry, curWord):
     # Recurse down into the appropriate try with the remainder of the word.
     addWordHelper(curTry[0][curLetter], nextWord)
 
-# Build up our try of 5 letter words from a known word set to start with.
+# Build up our try of words from a known word set to start with.
 for word in word_set:
     # Skip words that do not match our pattern.
     if not pattern.match(word):

@@ -5,8 +5,9 @@ A program that can be helpful when playing [Wordle](https://www.nytimes.com/game
 The program loads a set of all known words and trims it down to those matching the target length. Then it can further
 remove words that contain letters that are known to not be in the target word. It can also remove words that do not have
 a given letter at a given index in the word. It also can rule out words that don't contain letters known to be in the
-target word but at an unknown position. Statistics are shown at each step to indicate how many matching words are left,
-the probability of guessing the correct word, and the possible words can even be printed out.
+target word but at an unknown position or contain a letter known to be in the target word but at an index where we know
+it's not there. Statistics are shown at each step to indicate how many matching words are left, the probability of
+guessing the correct word, and the possible words can even be printed out.
 
 Really I just wanted to play around with Python scripting and using a Try since it'd been a while.
 

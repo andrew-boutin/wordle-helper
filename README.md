@@ -24,3 +24,17 @@ A program that can be helpful when playing [Wordle](https://www.nytimes.com/game
 ## Teardown
 
     deactivate
+
+## Example
+
+    (wordle-helper-venv) aboutin@aboutin-mac wordle-helper % python main.py
+    ------ Stats ------
+    3194 words found
+    Chance of correct guess 0.03%
+    ---- End Stats ----
+    Removing words that contain invalid letters: ['r', 's', 't', 'l', 'n', 'e']
+    ------ Stats ------
+    185 words found
+    Chance of correct guess 0.54%
+    ---- End Stats ----
+

@@ -2,6 +2,11 @@
 from english_words import english_words_lower_set
 import re, json
 
+# TODO: Discard words that don't have known letters in the correct spot.
+# TODO: Account for letters that are known to be in the word, but at an unknown position.
+known_invalid_letters = ['r', 's', 't', 'l', 'n', 'e']
+word_set = english_words_lower_set
+
 # A pattern for only 5 lowercase letters.
 pattern = re.compile("^[a-z]{5}$")
 
@@ -10,13 +15,12 @@ wordTry = ({}, False)
 
 # Prints out stats such as words found, chance of guessing the correct word, and total matching words.
 def printStats(print_words=False):
+    print("------ Stats ------")
     totalWords = walkTry(wordTry, "", print_words)
     guessChangePercentage = 100 / totalWords
-
-    print("------ Words ------")
     print(str(totalWords) + " words found")
     print("Chance of correct guess " + str(round(guessChangePercentage, 2)) + "%")
-    print("---- End Words ----")
+    print("---- End Stats ----")
 
 # Recursive helper for printing words and tallying up the total number of them.
 def walkTry(curWordTry, prefix, print_words):
@@ -66,7 +70,7 @@ def addWordHelper(curTry, curWord):
     addWordHelper(curTry[0][curLetter], nextWord)
 
 # Build up our try of 5 letter words from a known word set to start with.
-for word in english_words_lower_set:
+for word in word_set:
     # Skip words that do not match our pattern.
     if not pattern.match(word):
         continue
@@ -74,10 +78,35 @@ for word in english_words_lower_set:
     # Add each matching word to our try.
     addWordHelper(wordTry, word)
 
-# Pretty formatting.
+def applyKnownInfo(invalidLetters=[]):
+    print("Removing words that contain invalid letters: " + str(invalidLetters))
+    applyKnownInfoHelper(invalidLetters, wordTry)
+
+def applyKnownInfoHelper(invalidLetters, curWordTry):
+    # Track what letters/sub-trys to remove along the way.
+    letters_to_delete = []
+
+    # Check the current level's letters for invalid ones.
+    for letter, innerTry in curWordTry[0].items():
+        # See if the letter is invalid.
+        if letter in invalidLetters:
+            # Store it for later as we can't modify during iteration.
+            letters_to_delete.append(letter)
+        else:
+            # Recurse to check sub-try since so far it's still valid.
+            applyKnownInfoHelper(invalidLetters, innerTry)
+
+    # Remove all found invalid parts.
+    for letter in letters_to_delete: del curWordTry[0][letter]
+
+# Space formatting.
 print()
 # The initial try is quite large so don't print it out by default.
 #printTry()
 # Print out some stats on our current try.
+printStats()
+#printStats(print_words=True)
+
+applyKnownInfo(known_invalid_letters)
 printStats()
 #printStats(print_words=True)

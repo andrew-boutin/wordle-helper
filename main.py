@@ -2,17 +2,20 @@
 from english_words import english_words_lower_set
 import re, json
 
-# TODO: Account for letters that are known to be in the word, but at an unknown position.
+# TODO: Rule out words if letter known to be in word, but not at specific indexes.
 # TODO: Make interactive, take in input, clean up global variables.
+word_length = 5
 # A list of letters that are known to not be in the word.
-known_invalid_letters = ['r', 's', 't', 'l', 'n', 'e']
+known_invalid_letters = ['l', 'u', 'm', 'p']
 # A dict of word index with known letter.
-known_position_letters = {0: 'a', 4: 'o'}
+known_position_letters = {1: 'a'}
+# A list of letters that are known to be in the word, but the exact position is not known.
+known_letters_unknown_position = ['z']
 word_set = english_words_lower_set
+
 print()
 print("------ Start ------")
 print(str(len(word_set)) + " known words to process")
-word_length = 5
 
 # A pattern for only X lowercase letters.
 pattern = re.compile("^[a-z]{" + str(word_length) + "}$")
@@ -72,8 +75,8 @@ def addWordHelper(curTry, curWord):
     # Recurse down into the appropriate try with the remainder of the word.
     addWordHelper(curTry[0][curLetter], nextWord)
 
-def findWordsOfGivenLength():
-    print("Finding words of length " + str(word_length))
+def findWordsOfGivenLength(length):
+    print("Finding words of length " + str(length))
 
     # Build up our try of words from a known word set to start with.
     for word in word_set:
@@ -85,13 +88,14 @@ def findWordsOfGivenLength():
         addWordHelper(wordTry, word)
 
 # Remove words with invalid letters and that don't have the correct known letter at a given index.
-def applyKnownInfo(invalidLetters=[], known_position_letters=[]):
-    print("Removing words that contain invalid letters: " + str(invalidLetters))
-    print("Removing words that do not have the following letters at the respective index: " + str(known_position_letters))
-    applyKnownInfoHelper(invalidLetters, wordTry, 0)
+def applyKnownInfo(invalidLetters=[], position_letters={}, letters_unknown_position=[]):
+    print("Removing words that contain letters known to not be in the word: " + str(invalidLetters))
+    print("Removing words that do not have the following letters at the respective index: " + str(position_letters))
+    print("Removing words that don't contain all of the letters known to be in the word at unknown positions: " + str(letters_unknown_position))
+    applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_position, wordTry, 0, "")
 
 # Helper for recursively removing words with invalid letters and that don't have the correct known letter at a given index.
-def applyKnownInfoHelper(invalidLetters, curWordTry, curIndex):
+def applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_position, curWordTry, curIndex, curWord):
     # Track what letters/sub-trys to remove along the way.
     letters_to_delete = []
 
@@ -104,27 +108,37 @@ def applyKnownInfoHelper(invalidLetters, curWordTry, curIndex):
             continue
 
         # See if we know the correct letter for the current index.
-        if curIndex in known_position_letters:
-            correctLetter = known_position_letters[curIndex]
+        if curIndex in position_letters:
+            correctLetter = position_letters[curIndex]
 
             # Track this letter for removal if it doesn't match the known good letter for the index.
             if letter != correctLetter:
                 letters_to_delete.append(letter)
                 continue
 
+        nextWord = curWord + letter
+
+        # Remove the word if it does not contain a letter that we know is in the word somewhere.
+        if innerTry[1]:
+            if not all([char in curWord for char in letters_unknown_position]):
+                tmpList = list(curWordTry[0][letter])
+                tmpList[1] = False
+                curWordTry[0][letter] = tuple(tmpList)
+                continue
+
         # Recurse to check sub-try since so far it's still valid.
-        applyKnownInfoHelper(invalidLetters, innerTry, curIndex + 1)
+        applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_position, innerTry, curIndex + 1, nextWord)
 
     # Remove all found invalid parts.
     for letter in letters_to_delete: del curWordTry[0][letter]
 
-findWordsOfGivenLength()
+findWordsOfGivenLength(word_length)
 # The initial try is quite large so don't print it out by default.
 #printTry()
 # Print out some stats on our current try.
 printStats()
 #printStats(print_words=True)
 
-applyKnownInfo(known_invalid_letters, known_position_letters)
+applyKnownInfo(known_invalid_letters, known_position_letters, known_letters_unknown_position)
 #printStats()
 printStats(print_words=True)

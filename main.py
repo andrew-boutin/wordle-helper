@@ -2,15 +2,14 @@
 from english_words import english_words_lower_set
 import re, json
 
-# TODO: Rule out words if letter known to be in word, but not at specific indexes.
 # TODO: Make interactive, take in input, clean up global variables.
 word_length = 5
 # A list of letters that are known to not be in the word.
-known_invalid_letters = ['l', 'u', 'm', 'p']
+known_invalid_letters = "lump"
 # A dict of word index with known letter.
 known_position_letters = {1: 'a'}
-# A list of letters that are known to be in the word, but the exact position is not known.
-known_letters_unknown_position = ['z']
+# A dict of word index with known invalid letters.
+known_letters_unknown_position = {0: "z"}
 word_set = english_words_lower_set
 
 print()
@@ -88,10 +87,10 @@ def findWordsOfGivenLength(length):
         addWordHelper(wordTry, word)
 
 # Remove words with invalid letters and that don't have the correct known letter at a given index.
-def applyKnownInfo(invalidLetters=[], position_letters={}, letters_unknown_position=[]):
+def applyKnownInfo(invalidLetters=[], position_letters={}, letters_unknown_position={}):
     print("Removing words that contain letters known to not be in the word: " + str(invalidLetters))
     print("Removing words that do not have the following letters at the respective index: " + str(position_letters))
-    print("Removing words that don't contain all of the letters known to be in the word at unknown positions: " + str(letters_unknown_position))
+    print("Removing words that either don't contain all of the letters known to be in the word at an unknown location or contain a letter in the target word at an index we know it's not at: " + str(letters_unknown_position))
     applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_position, wordTry, 0, "")
 
 # Helper for recursively removing words with invalid letters and that don't have the correct known letter at a given index.
@@ -116,15 +115,21 @@ def applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_posit
                 letters_to_delete.append(letter)
                 continue
 
-        nextWord = curWord + letter
-
-        # Remove the word if it does not contain a letter that we know is in the word somewhere.
-        if innerTry[1]:
-            if not all([char in curWord for char in letters_unknown_position]):
-                tmpList = list(curWordTry[0][letter])
-                tmpList[1] = False
-                curWordTry[0][letter] = tuple(tmpList)
+        # Remove the sub-try if this index matches a letter that we know does not match this position.
+        if curIndex in letters_unknown_position:
+            if letter in letters_unknown_position[curIndex]:
+                # Store it for later as we can't modify during iteration.
+                letters_to_delete.append(letter)
                 continue
+
+        # Remove the word if it does not contain all of the letters that we know are in the word somewhere.
+        nextWord = curWord + letter
+        if innerTry[1]:
+            for lettersInWord in letters_unknown_position.values():
+                if not all([char in nextWord for char in lettersInWord]):
+                    tmpList = list(curWordTry[0][letter])
+                    tmpList[1] = False
+                    curWordTry[0][letter] = tuple(tmpList)
 
         # Recurse to check sub-try since so far it's still valid.
         applyKnownInfoHelper(invalidLetters, position_letters, letters_unknown_position, innerTry, curIndex + 1, nextWord)

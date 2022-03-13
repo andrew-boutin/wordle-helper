@@ -39,15 +39,13 @@ Really I just wanted to play around with Python scripting and using a Try since 
     3194 words found
     Chance of correct guess 0.03%
     ---- End Stats ----
-    Removing words that contain letters known to not be in the word: ['l', 'u', 'm', 'p']
+    Removing words that contain letters known to not be in the word: lump
     Removing words that do not have the following letters at the respective index: {1: 'a'}
-    Removing words that don't contain all of the letters known to be in the word at unknown positions: ['z']
+    Removing words that either don't contain all of the letters known to be in the word at an unknown location or contain a letter in the target word at an index we know it's not at: {0: 'z'}
     ------ Stats ------
-    razor
     kazoo
+    razor
     jazzy
-    zazen
-    zaire
-    5 words found
-    Chance of correct guess 20.0%
+    3 words found
+    Chance of correct guess 33.33%
     ---- End Stats ----
